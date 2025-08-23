@@ -48,6 +48,7 @@ namespace WindowsHDRSliderTrayApp
             _window.Activate();
         }
 
+        public static bool BoostMaxBrightness { get; set; } = false;
         public static string OrientationSetting { get; set; } = "Horizontal";
     }
 }

@@ -12,6 +12,8 @@ namespace WindowsHDRSliderTrayApp;
 
 public sealed partial class SettingsWindow : Window
 {
+    private MainWindow? _mainWindow;
+
     public SettingsWindow()
     {
         InitializeComponent();
@@ -27,6 +29,7 @@ public sealed partial class SettingsWindow : Window
 
         CenterWindow();
 
+        _mainWindow = WindowHelper.ActiveWindows.OfType<MainWindow>().FirstOrDefault();
     }
 
     // Centers the given AppWindow on the screen based on the available display area.
@@ -42,11 +45,19 @@ public sealed partial class SettingsWindow : Window
         if (OrientationComboBox.SelectedItem is ComboBoxItem item)
         {
             var orientation = item.Content?.ToString();
-            var mainWindow = WindowHelper.ActiveWindows.OfType<MainWindow>().FirstOrDefault();
-            if (mainWindow != null)
+            if (_mainWindow != null)
             {
-                mainWindow.SetBrightnessOrientation(orientation);
+                _mainWindow.SetBrightnessOrientation(orientation);
             }
+        }
+    }
+
+    private void BoostMaxBrightnessToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+    {
+        App.BoostMaxBrightness = BoostMaxBrightnessToggleSwitch.IsOn;
+        if (_mainWindow != null)
+        {
+            _mainWindow.ApplyBrightness(_mainWindow.CurrentSliderValue);
         }
     }
 }

@@ -16,6 +16,7 @@
 
     <StackPanel Spacing="10" Padding="20">
         <TextBlock Text="Settings" FontSize="20" Margin="0,0,0,10"/>
+
         <tkcontrols:SettingsCard Header="Orientation">
             <ComboBox 
                 x:Name="OrientationComboBox"
@@ -24,6 +25,16 @@
                 <ComboBoxItem Content="Horizontal"/>
                 <ComboBoxItem Content="Vertical"/>
             </ComboBox>
+        </tkcontrols:SettingsCard>
+
+        <tkcontrols:SettingsCard 
+            Header="Boost Max Brightness"
+            Description="Increase maximum brightness beyond default. ⚠ Warning: May cause display damage. Use with caution.">
+            <ToggleSwitch
+                x:Name="BoostMaxBrightnessToggleSwitch"
+                IsOn="False"
+                Toggled="BoostMaxBrightnessToggleSwitch_Toggled">
+            </ToggleSwitch>
         </tkcontrols:SettingsCard>
     </StackPanel>
 </Window>

@@ -1,18 +1,9 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using WinUIGallery.Helpers;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -44,6 +35,8 @@ namespace WindowsHDRSliderTrayApp
         private List<IntPtr> _monitorHandles = new();
 
         private DwmpSDRToHDRBoostPtr _setBrightness;
+
+        public double CurrentSliderValue => BrightnessSlider.Value;
 
         public MainWindow()
         {
@@ -79,13 +72,12 @@ namespace WindowsHDRSliderTrayApp
                 }, IntPtr.Zero);
         }
 
-        private void Slider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        public void ApplyBrightness(double sliderValue)
         {
             if (_setBrightness == null) return;
 
-            double sliderValue = e.NewValue;
-            double minBrightness = 1;
-            double maxBrightness = 6;
+            double minBrightness = 1.0;
+            double maxBrightness = App.BoostMaxBrightness ? 12.0 : 6.0;
 
             double brightnessValue = minBrightness + (sliderValue / 100.0) * (maxBrightness - minBrightness);
 
@@ -102,6 +94,11 @@ namespace WindowsHDRSliderTrayApp
             }
         }
 
+        private void Slider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            ApplyBrightness(e.NewValue);
+        }
+
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
             var settingsWindow = new SettingsWindow();
@@ -113,18 +110,16 @@ namespace WindowsHDRSliderTrayApp
         {
             if (orientation == "Vertical")
             {
-                brightnessSlider.Orientation = Orientation.Vertical;
-                brightnessSlider.Width = 50;
-                brightnessSlider.Height = 200;
+                BrightnessSlider.Orientation = Orientation.Vertical;
+                BrightnessSlider.Width = 50;
+                BrightnessSlider.Height = 200;
             }
             else
             {
-                brightnessSlider.Orientation = Orientation.Horizontal;
-                brightnessSlider.Width = 200;
-                brightnessSlider.Height = 50;
+                BrightnessSlider.Orientation = Orientation.Horizontal;
+                BrightnessSlider.Width = 200;
+                BrightnessSlider.Height = 50;
             }
         }
-
-
     }
 }
