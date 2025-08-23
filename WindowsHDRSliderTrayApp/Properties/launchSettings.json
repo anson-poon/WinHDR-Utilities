@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "WindowsHDRSliderTrayApp (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "WindowsHDRSliderTrayApp (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
