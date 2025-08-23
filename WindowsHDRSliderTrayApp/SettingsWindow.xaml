@@ -29,7 +29,7 @@
 
         <tkcontrols:SettingsCard 
             Header="Boost Max Brightness"
-            Description="Increase maximum brightness beyond default. ⚠ Warning: May cause display damage. Use with caution.">
+            Description="Increase maximum brightness beyond default.&#x0a;⚠ Warning: May cause display damage. Use with caution.">
             <ToggleSwitch
                 x:Name="BoostMaxBrightnessToggleSwitch"
                 IsOn="False"

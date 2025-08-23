@@ -15,7 +15,6 @@
     </Window.SystemBackdrop>
 
     <StackPanel x:Name="StackPanel1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20">
-        <!--<TextBlock x:Name="DisplayTextBlock" Width="100" Text="0" TextAlignment="Center"/>-->
         <Slider x:Name="BrightnessSlider" Header="Brightness" Width="200" ValueChanged="Slider_ValueChanged"/>
 
         <Button ToolTipService.ToolTip="Settings" Click="SettingsButton_Click">

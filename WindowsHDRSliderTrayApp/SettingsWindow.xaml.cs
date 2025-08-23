@@ -45,7 +45,7 @@ public sealed partial class SettingsWindow : Window
         if (OrientationComboBox.SelectedItem is ComboBoxItem item)
         {
             var orientation = item.Content?.ToString();
-            if (_mainWindow != null)
+            if (_mainWindow != null && orientation != null)
             {
                 _mainWindow.SetBrightnessOrientation(orientation);
             }
