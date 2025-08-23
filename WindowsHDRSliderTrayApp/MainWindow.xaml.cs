@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using WinUIGallery.Helpers;
 
@@ -101,7 +102,17 @@ namespace WindowsHDRSliderTrayApp
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            var settingsWindow = new SettingsWindow();
+            var existingWindow = WindowHelper.ActiveWindows
+                .OfType<SettingsWindow>()
+                .FirstOrDefault();
+
+            if (existingWindow != null)
+            {
+                existingWindow.Activate();  // Bring the existing window to front
+                return;
+            }
+
+            var settingsWindow = new SettingsWindow();  // Create a new instance
             WindowHelper.TrackWindow(settingsWindow);
             settingsWindow.Activate();
         }
