@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:tkcontrols="using:CommunityToolkit.WinUI.Controls"
+    xmlns:views="using:WindowsHDRSliderTrayApp.Views"
     mc:Ignorable="d"
     Title="WindowsHDRSliderTrayApp">
 
@@ -29,7 +30,7 @@
         <Button ToolTipService.ToolTip="Settings" Click="SettingsButton_Click">
             <SymbolIcon x:Name="SettingIcon" Symbol="Setting" />
         </Button>
+
+        <views:TrayIconView x:Name="TrayIconView" />
     </StackPanel>
-
-
 </Window>
