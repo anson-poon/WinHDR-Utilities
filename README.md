@@ -4,8 +4,8 @@ WinHDR Utilities is an open-source suite of tools for managing Windows HDR setti
 ## Table of Contents
 * [Features](#features)
 * [Screenshot](#screenshot)
-* [Project Maintenance](#project-maintenance)
-* [Code Citations/Credit](#code-citationscredit)
+* [Installation](#installation)
+* [Code Credit](#code-credit)
 
 ## Features
 * SDR Brightness Slider – Control SDR brightness directly from the app, just as you would in ```Settings > System > Display > HDR.```
