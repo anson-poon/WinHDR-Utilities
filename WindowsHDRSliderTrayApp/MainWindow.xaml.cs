@@ -48,13 +48,16 @@ namespace WindowsHDRSliderTrayApp
         public MainWindow()
         {
             InitializeComponent();
+            ConfigureAppWindow();
             InitializeBrightnessDelegate();
             EnumerateMonitors();
+        }
 
+        private void ConfigureAppWindow()
+        {
             AppWindow.Title = "WinHDR Utilities";
-            AppWindow.Resize(new Windows.Graphics.SizeInt32(800, 250));
+            AppWindow.Resize(new Windows.Graphics.SizeInt32(800, 200));
             AppWindow.TitleBar.PreferredTheme = TitleBarTheme.UseDefaultAppMode;
-            MoveWindowToTray();
 
             hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
             WindowId wndId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
@@ -96,11 +99,6 @@ namespace WindowsHDRSliderTrayApp
                     _monitorHandles.Add(hMonitor);
                     return true;
                 }, IntPtr.Zero);
-        }
-
-        private void MoveWindowToTray()
-        {
-            
         }
 
         public void ApplyBrightness(double sliderValue)
@@ -163,7 +161,7 @@ namespace WindowsHDRSliderTrayApp
 
                 SettingIcon.Width = 35;
 
-                AppWindow.Resize(new Windows.Graphics.SizeInt32(250, 800));
+                AppWindow.Resize(new Windows.Graphics.SizeInt32(200, 800));
             }
             else
             {
@@ -175,7 +173,7 @@ namespace WindowsHDRSliderTrayApp
                 BrightnessSlider.Width = 300;
                 BrightnessSlider.Height = Double.NaN;
 
-                AppWindow.Resize(new Windows.Graphics.SizeInt32(800, 250));
+                AppWindow.Resize(new Windows.Graphics.SizeInt32(800, 200));
             }
         }
     }

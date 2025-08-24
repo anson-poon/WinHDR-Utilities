@@ -14,8 +14,8 @@
         <MicaBackdrop />
     </Window.SystemBackdrop>
 
-    <StackPanel Spacing="10" Padding="20">
-        <TextBlock Text="Settings" FontSize="20" Margin="0,0,0,10"/>
+    <StackPanel Spacing="5" Padding="20">
+        <TextBlock Text="Settings" FontSize="20" Margin="5,0,0,10"/>
 
         <tkcontrols:SettingsCard Header="Orientation">
             <ComboBox 
