@@ -1,8 +1,10 @@
+using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System.Linq;
 using Windows.Graphics;
+using Windows.UI.WindowManagement;
 using WinUIGallery.Helpers;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -27,9 +29,26 @@ public sealed partial class SettingsWindow : Window
         //// Set the title bar icon (displayed in the window's title bar)
         //AppWindow.SetTitleBarIcon("Assets/Tiles/GalleryIcon.ico");
 
-        CenterWindow();
-
         _mainWindow = WindowHelper.ActiveWindows.OfType<MainWindow>().FirstOrDefault();
+
+        if (_mainWindow != null)
+        {
+            var mainBounds = _mainWindow.AppWindow.Position;
+            var mainSize = _mainWindow.AppWindow.Size;
+
+            // Place settings window above the main window
+            var settingsX = mainBounds.X + (mainSize.Width - 800) / 2;
+            var settingsY = mainBounds.Y - 510;
+
+            if (settingsY < 0) settingsY = 0;
+
+            AppWindow.Move(new Windows.Graphics.PointInt32(settingsX, settingsY));
+        }
+        else
+        {
+            CenterWindow();
+        }
+       
     }
 
     // Centers the given AppWindow on the screen based on the available display area.
