@@ -1,3 +1,5 @@
+using Microsoft.UI;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -39,11 +41,34 @@ namespace WindowsHDRSliderTrayApp
 
         public double CurrentSliderValue => BrightnessSlider.Value;
 
+        private IntPtr hWnd = IntPtr.Zero;
+        private AppWindow appW = null;
+        private OverlappedPresenter presenter = null;
+
         public MainWindow()
         {
             InitializeComponent();
             InitializeBrightnessDelegate();
             EnumerateMonitors();
+
+            AppWindow.Title = "WinHDR Utilities";
+            AppWindow.Resize(new Windows.Graphics.SizeInt32(800, 250));
+            AppWindow.TitleBar.PreferredTheme = TitleBarTheme.UseDefaultAppMode;
+            MoveWindowToTray();
+
+            hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+            WindowId wndId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
+            appW = AppWindow.GetFromWindowId(wndId);
+            presenter = appW.Presenter as OverlappedPresenter;
+            if (presenter != null)
+            {
+                presenter.IsMaximizable = false;
+                presenter.IsMinimizable = false;
+                presenter.IsResizable = false;
+                presenter.SetBorderAndTitleBar(true, false);
+            }
+
+            ExtendsContentIntoTitleBar = true;
         }
 
         private void InitializeBrightnessDelegate()
@@ -71,6 +96,11 @@ namespace WindowsHDRSliderTrayApp
                     _monitorHandles.Add(hMonitor);
                     return true;
                 }, IntPtr.Zero);
+        }
+
+        private void MoveWindowToTray()
+        {
+            
         }
 
         public void ApplyBrightness(double sliderValue)
@@ -121,15 +151,31 @@ namespace WindowsHDRSliderTrayApp
         {
             if (orientation == "Vertical")
             {
+                StackPanel1.Orientation = Orientation.Vertical;
+                StackPanel1.HorizontalAlignment = HorizontalAlignment.Center;
+                StackPanel1.VerticalAlignment = VerticalAlignment.Center;
+
+                BrightnessIcon.Width = 35;
+
                 BrightnessSlider.Orientation = Orientation.Vertical;
-                BrightnessSlider.Width = 50;
-                BrightnessSlider.Height = 200;
+                BrightnessSlider.Width = 35;
+                BrightnessSlider.Height = 300;
+
+                SettingIcon.Width = 35;
+
+                AppWindow.Resize(new Windows.Graphics.SizeInt32(250, 800));
             }
             else
             {
+                StackPanel1.Orientation = Orientation.Horizontal;
+                StackPanel1.HorizontalAlignment = HorizontalAlignment.Center;
+                StackPanel1.VerticalAlignment = VerticalAlignment.Center;
+
                 BrightnessSlider.Orientation = Orientation.Horizontal;
-                BrightnessSlider.Width = 200;
-                BrightnessSlider.Height = 50;
+                BrightnessSlider.Width = 300;
+                BrightnessSlider.Height = Double.NaN;
+
+                AppWindow.Resize(new Windows.Graphics.SizeInt32(800, 250));
             }
         }
     }
