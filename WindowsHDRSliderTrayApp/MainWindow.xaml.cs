@@ -45,6 +45,11 @@ namespace WindowsHDRSliderTrayApp
         private AppWindow appW = null;
         private OverlappedPresenter presenter = null;
 
+        [DllImport("user32.dll")]
+        private static extern bool SystemParametersInfo(uint uiAction, uint uiParam, out Rect pvParam, uint fWinIni);
+
+        
+
         public MainWindow()
         {
             InitializeComponent();
@@ -65,6 +70,7 @@ namespace WindowsHDRSliderTrayApp
             presenter = appW.Presenter as OverlappedPresenter;
             if (presenter != null)
             {
+                presenter.IsAlwaysOnTop = true;
                 presenter.IsMaximizable = false;
                 presenter.IsMinimizable = false;
                 presenter.IsResizable = false;
@@ -72,6 +78,35 @@ namespace WindowsHDRSliderTrayApp
             }
 
             ExtendsContentIntoTitleBar = true;
+            MoveWindowToTray();
+        }
+
+        private void MoveWindowToTray()
+        {
+            if (appW == null) return;
+
+            var workArea = GetPrimaryMonitorWorkArea();
+
+            int windowWidth = (int)appW.Size.Width;
+            int windowHeight = (int)appW.Size.Height;
+
+            int x = workArea.Width - windowWidth - 10; // offset from right
+            int y = workArea.Height - windowHeight - 70; // offset from bottom
+
+            appW.Move(new Windows.Graphics.PointInt32(x, y));
+        }
+
+        private Windows.Graphics.RectInt32 GetPrimaryMonitorWorkArea()
+        {
+            Rect workArea;
+            SystemParametersInfo(0x0030, 0, out workArea, 0); // SPI_GETWORKAREA
+            return new Windows.Graphics.RectInt32
+            {
+                X = workArea.left,
+                Y = workArea.top,
+                Width = workArea.right - workArea.left,
+                Height = workArea.bottom - workArea.top
+            };
         }
 
         private void InitializeBrightnessDelegate()
