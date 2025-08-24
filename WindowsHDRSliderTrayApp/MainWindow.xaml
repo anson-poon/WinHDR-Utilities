@@ -15,22 +15,25 @@
         <MicaBackdrop />
     </Window.SystemBackdrop>
 
-    <StackPanel 
-        x:Name="StackPanel1" 
-        Orientation="Horizontal" 
-        HorizontalAlignment="Center" 
-        VerticalAlignment="Center" 
-        Spacing="20">
-        <FontIcon x:Name="BrightnessIcon" Glyph="&#xE706;" />
-        <Slider 
-            x:Name="BrightnessSlider"  
-            Width="300"
-            ValueChanged="Slider_ValueChanged"/>
+    <Grid>
+        <StackPanel 
+            x:Name="StackPanel1" 
+            Orientation="Horizontal" 
+            HorizontalAlignment="Center" 
+            VerticalAlignment="Center" 
+            Spacing="20">
+            <FontIcon x:Name="BrightnessIcon" Glyph="&#xE706;" />
+            <Slider 
+                x:Name="BrightnessSlider"  
+                Width="300"
+                ValueChanged="Slider_ValueChanged"/>
 
-        <Button ToolTipService.ToolTip="Settings" Click="SettingsButton_Click">
-            <SymbolIcon x:Name="SettingIcon" Symbol="Setting" />
-        </Button>
+            <Button ToolTipService.ToolTip="Settings" Click="SettingsButton_Click">
+                <SymbolIcon x:Name="SettingIcon" Symbol="Setting" />
+            </Button>
+
+        </StackPanel>
 
         <views:TrayIconView x:Name="TrayIconView" />
-    </StackPanel>
+    </Grid>
 </Window>

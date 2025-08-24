@@ -1,5 +1,5 @@
+using CommunityToolkit.Mvvm.Input;
 using H.NotifyIcon;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
 namespace WindowsHDRSliderTrayApp.Views;
@@ -11,26 +11,23 @@ public partial class TrayIconView : UserControl
         InitializeComponent();
     }
 
-    public void ShowHideWindow_Click(object sender, RoutedEventArgs e)
+    [RelayCommand]
+    public void ShowHideWindow()
     {
         var window = App.MainWindow;
         if (window == null)
-        {
             return;
-        }
 
         if (window.Visible)
-        {
             window.Hide();
-        }
         else
-        {
             window.Show();
-        }
+
         App.IsWindowVisible = window.Visible;
     }
 
-    public void ExitApplication_Click(object sender, RoutedEventArgs e)
+    [RelayCommand]
+    public void ExitApplication()
     {
         App.HandleClosedEvents = false;
         TrayIcon.Dispose();
