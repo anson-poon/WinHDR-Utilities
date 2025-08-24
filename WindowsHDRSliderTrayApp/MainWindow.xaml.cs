@@ -1,4 +1,5 @@
-﻿using Microsoft.UI;
+﻿using H.NotifyIcon;
+using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -47,8 +48,9 @@ namespace WindowsHDRSliderTrayApp
 
         [DllImport("user32.dll")]
         private static extern bool SystemParametersInfo(uint uiAction, uint uiParam, out Rect pvParam, uint fWinIni);
-
         
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
 
         public MainWindow()
         {
@@ -60,13 +62,19 @@ namespace WindowsHDRSliderTrayApp
 
         private void ConfigureAppWindow()
         {
-            AppWindow.Title = "WinHDR Utilities";
-            AppWindow.Resize(new Windows.Graphics.SizeInt32(800, 200));
-            AppWindow.TitleBar.PreferredTheme = TitleBarTheme.UseDefaultAppMode;
-
             hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
             WindowId wndId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
             appW = AppWindow.GetFromWindowId(wndId);
+
+            appW.Title = "WinHDR Utilities";
+            appW.Resize(new Windows.Graphics.SizeInt32(800, 200));
+            appW.TitleBar.PreferredTheme = TitleBarTheme.UseDefaultAppMode;
+
+            if (hWnd != GetForegroundWindow())
+            {
+                appW.Hide();
+            }
+
             presenter = appW.Presenter as OverlappedPresenter;
             if (presenter != null)
             {
@@ -78,6 +86,8 @@ namespace WindowsHDRSliderTrayApp
             }
 
             ExtendsContentIntoTitleBar = true;
+
+            Activated += MainWindow_Activated;
             MoveWindowToTray();
         }
 
@@ -107,6 +117,17 @@ namespace WindowsHDRSliderTrayApp
                 Width = workArea.right - workArea.left,
                 Height = workArea.bottom - workArea.top
             };
+        }
+
+        private void MainWindow_Activated(object sender, WindowActivatedEventArgs e)
+        {
+            if (e.WindowActivationState == WindowActivationState.Deactivated)
+            {
+                if (!App.Current.Resources.ContainsKey("IsSettingsWindowOpen"))
+                {
+                    this.Hide();
+                }
+            }
         }
 
         private void InitializeBrightnessDelegate()
@@ -177,6 +198,14 @@ namespace WindowsHDRSliderTrayApp
 
             var settingsWindow = new SettingsWindow();  // Create a new instance
             WindowHelper.TrackWindow(settingsWindow);
+
+            // Reset the flag when closed
+            settingsWindow.Closed += (s, args) =>
+            {
+                App.Current.Resources.Remove("IsSettingsWindowOpen");
+            };
+
+            App.Current.Resources["IsSettingsWindowOpen"] = true;
             settingsWindow.Activate();
         }
 
