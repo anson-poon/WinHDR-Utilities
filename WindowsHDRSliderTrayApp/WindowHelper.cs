@@ -204,7 +204,7 @@ public partial class WindowHelper
             var mainSize = mainWindow.AppWindow.Size;
 
             // Place window above the main window
-            var newX = mainBounds.X + (mainSize.Width - 800) / 2;
+            var newX = mainBounds.X + mainSize.Width - 800;
             var newY = mainBounds.Y - 510;
 
             if (newY < 0) newX = 0;

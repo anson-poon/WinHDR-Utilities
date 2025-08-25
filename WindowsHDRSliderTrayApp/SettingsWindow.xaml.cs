@@ -40,6 +40,8 @@ public sealed partial class SettingsWindow : Window
             if (_mainWindow != null && orientation != null)
             {
                 _mainWindow.SetBrightnessOrientation(orientation);
+                WindowHelper.MoveWindowToTray(_mainWindow);
+                WindowHelper.BringWindowAboveMain(this);
             }
         }
     }
