@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Windows.Graphics;
 using WinRT.Interop;
 using WinUIGallery.Helpers;
 
@@ -43,9 +44,8 @@ namespace WindowsHDRSliderTrayApp
 
         public double CurrentSliderValue => BrightnessSlider.Value;
 
-        private IntPtr hWnd = IntPtr.Zero;
-        private AppWindow appW = null;
-        private OverlappedPresenter presenter = null;
+        private AppWindow appW;
+        private OverlappedPresenter presenter;
 
         [DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
@@ -60,32 +60,15 @@ namespace WindowsHDRSliderTrayApp
 
         private void ConfigureAppWindow()
         {
-            hWnd = WindowNative.GetWindowHandle(this);
-            WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
-            appW = AppWindow.GetFromWindowId(wndId);
+            appW = WindowHelper.ConfigureBaseWindow(this, "WinHDR Utilities", new SizeInt32(800, 200));
 
-            if (hWnd != GetForegroundWindow())
-            {
-                appW.Hide();
-            }
-
-            appW.Title = "WinHDR Utilities";
-            appW.Resize(new Windows.Graphics.SizeInt32(800, 200));
-            appW.TitleBar.PreferredTheme = TitleBarTheme.UseDefaultAppMode;
+            WindowHelper.HideWindowIfNotForeground(this);
+            WindowHelper.MoveWindowToTray(this);
             ExtendsContentIntoTitleBar = true;
+            Activated += MainWindow_Activated;
 
             presenter = appW.Presenter as OverlappedPresenter;
-            if (presenter != null)
-            {
-                presenter.IsAlwaysOnTop = true;
-                presenter.IsMaximizable = false;
-                presenter.IsMinimizable = false;
-                presenter.IsResizable = false;
-                presenter.SetBorderAndTitleBar(true, false);
-            }
-
-            Activated += MainWindow_Activated;
-            WindowHelper.MoveWindowToTray(this);
+            WindowHelper.ConfigurePresenter(presenter);
         }
 
         private void MainWindow_Activated(object sender, WindowActivatedEventArgs e)

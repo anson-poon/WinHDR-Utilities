@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.Graphics;
+using Windows.Media.Streaming.Adaptive;
 using Windows.Storage;
 using WindowsHDRSliderTrayApp;
 using WinRT.Interop;
@@ -98,6 +99,8 @@ public partial class WindowHelper
     private static extern bool SetForegroundWindow(IntPtr hWnd);
     [DllImport("user32.dll")]
     private static extern bool SystemParametersInfo(uint uiAction, uint uiParam, out Rect pvParam, uint fWinIni);
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetForegroundWindow();
     private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
     private static AppWindow? GetAppWindow(Window window)
@@ -105,6 +108,40 @@ public partial class WindowHelper
         var hwnd = WindowNative.GetWindowHandle(window);
         var windowId = Win32Interop.GetWindowIdFromWindow(hwnd);
         return AppWindow.GetFromWindowId(windowId);
+    }
+
+    public static AppWindow ConfigureBaseWindow(Window window, string title, SizeInt32 size)
+    {
+        var hWnd = WindowNative.GetWindowHandle(window);
+        var wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
+        var appWindow = AppWindow.GetFromWindowId(wndId);
+
+        appWindow.Title = title;
+        appWindow.Resize(size);
+        appWindow.TitleBar.PreferredTheme = TitleBarTheme.UseDefaultAppMode;
+
+        return appWindow;
+    }
+
+    public static void ConfigurePresenter(OverlappedPresenter? presenter)
+    {
+        if (presenter == null) return;
+
+        presenter.IsAlwaysOnTop = true;
+        presenter.IsMaximizable = false;
+        presenter.IsMinimizable = false;
+        presenter.IsResizable = false;
+        presenter.SetBorderAndTitleBar(true, false);
+    }
+
+    public static void HideWindowIfNotForeground(Window window)
+    {
+        var hwnd = WindowNative.GetWindowHandle(window);
+        var appWindow = GetAppWindow(window);
+        if (hwnd != GetForegroundWindow() && appWindow != null)
+        {
+            appWindow.Hide();
+        }
     }
 
     public static void BringWindowToFront(Window window)
