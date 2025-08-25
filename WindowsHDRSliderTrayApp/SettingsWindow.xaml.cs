@@ -21,14 +21,14 @@ public sealed partial class SettingsWindow : Window
         InitializeComponent();
 
         AppWindow.Title = "Settings";
-        AppWindow.Resize(new Windows.Graphics.SizeInt32(800, 500));
-        AppWindow.Move(new Windows.Graphics.PointInt32(50, 50));
+        AppWindow.Resize(new SizeInt32(800, 500));
+        AppWindow.Move(new PointInt32(50, 50));
         AppWindow.TitleBar.PreferredTheme = TitleBarTheme.UseDefaultAppMode;
         //// Set the taskbar icon (displayed in the taskbar)
         //AppWindow.SetTaskbarIcon("Assets/Tiles/GalleryIcon.ico");
         //// Set the title bar icon (displayed in the window's title bar)
         //AppWindow.SetTitleBarIcon("Assets/Tiles/GalleryIcon.ico");
-
+        _mainWindow = WindowHelper.ActiveWindows.OfType<MainWindow>().FirstOrDefault();
         WindowHelper.BringWindowAboveMain(this); 
     }
 
