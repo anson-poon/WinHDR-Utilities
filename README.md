@@ -14,6 +14,8 @@ WinHDR Utilities is an open-source suite of tools for managing Windows HDR setti
 * Slider Orientation Control – Customize slider orientation.
 
 ## Screenshot
+* Slider & settings windows
+<img width="500" alt="image" src="https://github.com/user-attachments/assets/3b6c7f3f-6c11-4e19-998c-18f8f36ce7a2" />
 
 
 ## Installation
