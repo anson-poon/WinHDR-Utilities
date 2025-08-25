@@ -29,34 +29,7 @@ public sealed partial class SettingsWindow : Window
         //// Set the title bar icon (displayed in the window's title bar)
         //AppWindow.SetTitleBarIcon("Assets/Tiles/GalleryIcon.ico");
 
-        _mainWindow = WindowHelper.ActiveWindows.OfType<MainWindow>().FirstOrDefault();
-
-        if (_mainWindow != null)
-        {
-            var mainBounds = _mainWindow.AppWindow.Position;
-            var mainSize = _mainWindow.AppWindow.Size;
-
-            // Place settings window above the main window
-            var settingsX = mainBounds.X + (mainSize.Width - 800) / 2;
-            var settingsY = mainBounds.Y - 510;
-
-            if (settingsY < 0) settingsY = 0;
-
-            AppWindow.Move(new Windows.Graphics.PointInt32(settingsX, settingsY));
-        }
-        else
-        {
-            CenterWindow();
-        }
-       
-    }
-
-    // Centers the given AppWindow on the screen based on the available display area.
-    private void CenterWindow()
-    {
-        var area = DisplayArea.GetFromWindowId(AppWindow.Id, DisplayAreaFallback.Nearest)?.WorkArea;
-        if (area == null) return;
-        AppWindow.Move(new PointInt32((area.Value.Width - AppWindow.Size.Width) / 2, (area.Value.Height - AppWindow.Size.Height) / 2));
+        WindowHelper.BringWindowAboveMain(this); 
     }
 
     private void OrientationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

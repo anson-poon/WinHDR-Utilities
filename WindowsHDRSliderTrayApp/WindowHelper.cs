@@ -1,12 +1,18 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.UI;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Windows.Graphics;
 using Windows.Storage;
 using WindowsHDRSliderTrayApp;
+using WinRT.Interop;
 
 namespace WinUIGallery.Helpers;
 
@@ -80,4 +86,61 @@ public partial class WindowHelper
     //    }
     //    return localFolder;
     //}
+
+    // Custom helpers
+
+    private static AppWindow? GetAppWindow(Window window)
+    {
+        var hwnd = WindowNative.GetWindowHandle(window);
+        var windowId = Win32Interop.GetWindowIdFromWindow(hwnd);
+        return AppWindow.GetFromWindowId(windowId);
+    }
+
+    [DllImport("user32.dll")]
+    private static extern bool SetForegroundWindow(IntPtr hWnd);
+    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+    public static void BringWindowToFront(Window window)
+    {
+        var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
+        SetForegroundWindow(hwnd);
+    }
+
+    public static void CenterWindow(Window window)
+    {
+        var appWindow = GetAppWindow(window);
+        if (appWindow is null) return;
+
+        var area = DisplayArea.GetFromWindowId(appWindow.Id, DisplayAreaFallback.Nearest)?.WorkArea;
+        if (area == null) return;
+
+        var newX = (area.Value.Width - appWindow.Size.Width) / 2;
+        var newY = (area.Value.Height - appWindow.Size.Height) / 2;
+
+        appWindow.Move(new PointInt32(newX, newY));
+    }
+
+    public static void BringWindowAboveMain(Window window)
+    {
+        var mainWindow = ActiveWindows.OfType<MainWindow>().FirstOrDefault();
+        var appWindow = GetAppWindow(window);
+
+        if (mainWindow != null && appWindow != null)
+        {
+            var mainBounds = mainWindow.AppWindow.Position;
+            var mainSize = mainWindow.AppWindow.Size;
+
+            // Place window above the main window
+            var newX = mainBounds.X + (mainSize.Width - 800) / 2;
+            var newY = mainBounds.Y - 510;
+
+            if (newY < 0) newX = 0;
+
+            appWindow.Move(new PointInt32(newX, newY));
+        }
+        else
+        {
+            CenterWindow(window);   //fallback
+        }
+    }
 }

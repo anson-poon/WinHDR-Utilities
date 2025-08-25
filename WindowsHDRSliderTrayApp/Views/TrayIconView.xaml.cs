@@ -1,10 +1,12 @@
 using CommunityToolkit.Mvvm.Input;
 using H.NotifyIcon;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using WinRT.Interop;
+using WinUIGallery.Helpers;
 
 namespace WindowsHDRSliderTrayApp.Views;
 
@@ -32,8 +34,7 @@ public partial class TrayIconView : UserControl
         else
         {
             window.Show();
-            var hwnd = WindowNative.GetWindowHandle(window);
-            SetForegroundWindow(hwnd);
+            WindowHelper.BringWindowToFront(window);
         }
 
         App.IsWindowVisible = window.Visible;
@@ -46,4 +47,5 @@ public partial class TrayIconView : UserControl
         TrayIcon.Dispose();
         App.MainWindow?.Close();
     }
+
 }

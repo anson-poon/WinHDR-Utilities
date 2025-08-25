@@ -66,14 +66,14 @@ namespace WindowsHDRSliderTrayApp
             WindowId wndId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
             appW = AppWindow.GetFromWindowId(wndId);
 
-            appW.Title = "WinHDR Utilities";
-            appW.Resize(new Windows.Graphics.SizeInt32(800, 200));
-            appW.TitleBar.PreferredTheme = TitleBarTheme.UseDefaultAppMode;
-
             if (hWnd != GetForegroundWindow())
             {
                 appW.Hide();
             }
+
+            appW.Title = "WinHDR Utilities";
+            appW.Resize(new Windows.Graphics.SizeInt32(800, 200));
+            appW.TitleBar.PreferredTheme = TitleBarTheme.UseDefaultAppMode;
 
             presenter = appW.Presenter as OverlappedPresenter;
             if (presenter != null)
