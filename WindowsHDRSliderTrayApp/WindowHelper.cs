@@ -88,6 +88,17 @@ public partial class WindowHelper
     //}
 
     // Custom helpers
+    [StructLayout(LayoutKind.Sequential)]
+    private struct Rect
+    {
+        public int left, top, right, bottom;
+    }
+
+    [DllImport("user32.dll")]
+    private static extern bool SetForegroundWindow(IntPtr hWnd);
+    [DllImport("user32.dll")]
+    private static extern bool SystemParametersInfo(uint uiAction, uint uiParam, out Rect pvParam, uint fWinIni);
+    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
     private static AppWindow? GetAppWindow(Window window)
     {
@@ -96,14 +107,39 @@ public partial class WindowHelper
         return AppWindow.GetFromWindowId(windowId);
     }
 
-    [DllImport("user32.dll")]
-    private static extern bool SetForegroundWindow(IntPtr hWnd);
-    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
     public static void BringWindowToFront(Window window)
     {
-        var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
+        var hwnd = WindowNative.GetWindowHandle(window);
         SetForegroundWindow(hwnd);
+    }
+
+    public static void MoveWindowToTray(Window window)
+    {
+        var appWindow = GetAppWindow(window);
+        if (appWindow is null) return;
+
+        var workArea = GetPrimaryMonitorWorkArea();
+
+        int windowWidth = (int)appWindow.Size.Width;
+        int windowHeight = (int)appWindow.Size.Height;
+
+        int x = workArea.Width - windowWidth - 10; // offset from right
+        int y = workArea.Height - windowHeight - 70; // offset from bottom
+
+        appWindow.Move(new PointInt32(x, y));
+    }
+
+    private static RectInt32 GetPrimaryMonitorWorkArea()
+    {
+        Rect workArea;
+        SystemParametersInfo(0x0030, 0, out workArea, 0); // SPI_GETWORKAREA
+        return new RectInt32
+        {
+            X = workArea.left,
+            Y = workArea.top,
+            Width = workArea.right - workArea.left,
+            Height = workArea.bottom - workArea.top
+        };
     }
 
     public static void CenterWindow(Window window)

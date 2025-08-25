@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using WinRT.Interop;
 using WinUIGallery.Helpers;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -47,9 +48,6 @@ namespace WindowsHDRSliderTrayApp
         private OverlappedPresenter presenter = null;
 
         [DllImport("user32.dll")]
-        private static extern bool SystemParametersInfo(uint uiAction, uint uiParam, out Rect pvParam, uint fWinIni);
-        
-        [DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
 
         public MainWindow()
@@ -62,8 +60,8 @@ namespace WindowsHDRSliderTrayApp
 
         private void ConfigureAppWindow()
         {
-            hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
-            WindowId wndId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
+            hWnd = WindowNative.GetWindowHandle(this);
+            WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
             appW = AppWindow.GetFromWindowId(wndId);
 
             if (hWnd != GetForegroundWindow())
@@ -74,6 +72,7 @@ namespace WindowsHDRSliderTrayApp
             appW.Title = "WinHDR Utilities";
             appW.Resize(new Windows.Graphics.SizeInt32(800, 200));
             appW.TitleBar.PreferredTheme = TitleBarTheme.UseDefaultAppMode;
+            ExtendsContentIntoTitleBar = true;
 
             presenter = appW.Presenter as OverlappedPresenter;
             if (presenter != null)
@@ -85,38 +84,8 @@ namespace WindowsHDRSliderTrayApp
                 presenter.SetBorderAndTitleBar(true, false);
             }
 
-            ExtendsContentIntoTitleBar = true;
-
             Activated += MainWindow_Activated;
-            MoveWindowToTray();
-        }
-
-        private void MoveWindowToTray()
-        {
-            if (appW == null) return;
-
-            var workArea = GetPrimaryMonitorWorkArea();
-
-            int windowWidth = (int)appW.Size.Width;
-            int windowHeight = (int)appW.Size.Height;
-
-            int x = workArea.Width - windowWidth - 10; // offset from right
-            int y = workArea.Height - windowHeight - 70; // offset from bottom
-
-            appW.Move(new Windows.Graphics.PointInt32(x, y));
-        }
-
-        private Windows.Graphics.RectInt32 GetPrimaryMonitorWorkArea()
-        {
-            Rect workArea;
-            SystemParametersInfo(0x0030, 0, out workArea, 0); // SPI_GETWORKAREA
-            return new Windows.Graphics.RectInt32
-            {
-                X = workArea.left,
-                Y = workArea.top,
-                Width = workArea.right - workArea.left,
-                Height = workArea.bottom - workArea.top
-            };
+            WindowHelper.MoveWindowToTray(this);
         }
 
         private void MainWindow_Activated(object sender, WindowActivatedEventArgs e)
