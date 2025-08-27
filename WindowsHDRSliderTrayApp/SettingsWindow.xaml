@@ -20,7 +20,6 @@
         <tkcontrols:SettingsCard Header="Orientation">
             <ComboBox 
                 x:Name="OrientationComboBox"
-                SelectedIndex="0"
                 SelectionChanged="OrientationComboBox_SelectionChanged">
                 <ComboBoxItem Content="Horizontal"/>
                 <ComboBoxItem Content="Vertical"/>

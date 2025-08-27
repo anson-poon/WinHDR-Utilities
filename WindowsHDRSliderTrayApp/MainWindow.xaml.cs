@@ -8,7 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Windows.ApplicationModel;
 using Windows.Graphics;
+using Windows.Management.Core;
+using Windows.Storage;
 using WinRT.Interop;
 using WinUIGallery.Helpers;
 
@@ -19,6 +22,8 @@ namespace WindowsHDRSliderTrayApp
 {
     public sealed partial class MainWindow : Window
     {
+        private readonly ApplicationDataContainer localSettings = ApplicationDataManager.CreateForPackageFamily(Package.Current.Id.FamilyName).LocalSettings;
+
         private delegate void DwmpSDRToHDRBoostPtr(IntPtr monitor, double brightness);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
@@ -61,11 +66,13 @@ namespace WindowsHDRSliderTrayApp
         private void ConfigureAppWindow()
         {
             appW = WindowHelper.ConfigureBaseWindow(this, "WinHDR Utilities", new SizeInt32(800, 200));
-
             WindowHelper.HideWindowIfNotForeground(this);
-            WindowHelper.MoveWindowToTray(this);
             ExtendsContentIntoTitleBar = true;
             Activated += MainWindow_Activated;
+
+            int orientationIndex = localSettings.Values.TryGetValue("WindowOrientation", out var woValue) && woValue is int index ? index : 0;
+            SetWindowOrientation(orientationIndex);
+            WindowHelper.MoveWindowToTray(this);
 
             presenter = appW.Presenter as OverlappedPresenter;
             WindowHelper.ConfigurePresenter(presenter);
@@ -114,7 +121,7 @@ namespace WindowsHDRSliderTrayApp
             if (_setBrightness == null) return;
 
             double minBrightness = 1.0;
-            double maxBrightness = App.BoostMaxBrightness ? 12.0 : 6.0;
+            double maxBrightness = (bool)localSettings.Values["BoostMaxBrightness"] ? 12.0 : 6.0;
 
             double brightnessValue = minBrightness + (sliderValue / 100.0) * (maxBrightness - minBrightness);
 
@@ -138,9 +145,7 @@ namespace WindowsHDRSliderTrayApp
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            var existingWindow = WindowHelper.ActiveWindows
-                .OfType<SettingsWindow>()
-                .FirstOrDefault();
+            var existingWindow = WindowHelper.ActiveWindows.OfType<SettingsWindow>().FirstOrDefault();
 
             if (existingWindow != null)
             {
@@ -161,9 +166,9 @@ namespace WindowsHDRSliderTrayApp
             settingsWindow.Activate();
         }
 
-        public void SetBrightnessOrientation(string orientation)
+        public void SetWindowOrientation(int orientationIndex)
         {
-            if (orientation == "Vertical")
+            if (orientationIndex == 1)
             {
                 StackPanel1.Orientation = Orientation.Vertical;
                 StackPanel1.HorizontalAlignment = HorizontalAlignment.Center;
@@ -177,7 +182,7 @@ namespace WindowsHDRSliderTrayApp
 
                 SettingIcon.Width = 35;
 
-                AppWindow.Resize(new Windows.Graphics.SizeInt32(200, 800));
+                AppWindow.Resize(new SizeInt32(200, 800));
             }
             else
             {
@@ -189,7 +194,7 @@ namespace WindowsHDRSliderTrayApp
                 BrightnessSlider.Width = 300;
                 BrightnessSlider.Height = Double.NaN;
 
-                AppWindow.Resize(new Windows.Graphics.SizeInt32(800, 200));
+                AppWindow.Resize(new SizeInt32(800, 200));
             }
         }
     }
